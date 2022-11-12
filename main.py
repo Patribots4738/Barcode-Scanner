@@ -1,35 +1,22 @@
-#read barcode from image
 import cv2
-import pyzbar.pyzbar as pyzbar
-import csv
+from pyzbar import pyzbar
+import time
 
-def strip_data(data):
-	value = str(data)[2:-1]
-	return value
+cap = cv2.VideoCapture(1)
 
-def collect_data(decodedList):
-	for obj in decodedList:
-	#remove the first two and last character
-	#print Type and Data
-		print('Type : ', obj.type)
-		print('Data : ', strip_data(obj.data),'\n')
-	return obj
+def decode(image):
+    # returns the type and data of the first barcode it sees
+    decoded_objects = pyzbar.decode(image)
+    for obj in decoded_objects:
+        return obj.type, obj.data
+    return None, None
 
-def write_to_csv():
-	with open('barcode.csv', 'a', newline='') as file:
-		writer = csv.writer(file)
-		writer.writerow(["Type", "Data"])
-		for obj in decodedObjects:
-			writer.writerow([obj.type, strip_data(obj.data)])
+while 1:
+    _, frame = cap.read()
+    frame = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
 
-def show_image(image):
-	cv2.imshow('Image', image)
-	cv2.waitKey(0)
-
-img = cv2.imread('./fix.png')
-
-decodedObjects = pyzbar.decode(img)
-
-data = collect_data(decodedObjects)
-
-write_to_csv()
+    cv2.imshow('img1', frame)  # display the captured image
+    cv2.imshow('cropped', frame[200:280, 160:480])
+    data = decode(frame)
+    if data != (None, None): print(data, time.time())
+    cv2.waitKey(1)
