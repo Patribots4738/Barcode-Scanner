@@ -11,12 +11,28 @@ def decode(image):
         return obj.type, obj.data
     return None, None
 
-while 1:
-    _, frame = cap.read()
-    frame = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
+def write_to_csv(data):
+	if not os.path.exists("log.csv"):
+		with open ("log.csv", "w") as f:
+			writer = csv.writer(f)
+			writer.writerow(["Type", "Data"])
+	
+	with open("log.csv", "a") as f:
+		writer = csv.writer(f)
+		writer.writerow(data)
 
-    cv2.imshow('img1', frame)  # display the captured image
-    cv2.imshow('cropped', frame[200:280, 160:480])
-    data = decode(frame)
-    if data != (None, None): print(data, time.time())
-    cv2.waitKey(1)
+	# with open('barcode.csv', 'a', newline='') as file:
+	# 	writer = csv.writer(file)
+	# 	writer.writerow(["Type", "Data"])
+	# 	for obj in decodedObjects:
+	# 		writer.writerow([obj.type, strip_data(obj.data)])
+
+def takeFrame(camera):
+	_, frame = cap.read()
+	frame = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
+
+	cv2.imshow('img1', frame)  # display the captured image
+	cv2.imshow('cropped', frame[200:280, 160:480])
+	data = decode(frame)
+	if data != (None, None): print(data, time.time())
+	cv2.waitKey(1)
